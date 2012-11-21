@@ -17,11 +17,18 @@
 # limitations under the License.
 #
 
+::Chef::Recipe.send(:include, Opscode::OpenSSL::Password)
+
 include_recipe "apache2"
-include_recipe "mysql::server"
+if node['wordpress']['db']['host'] != "127.0.0.1"
+  include_recipe "mysql::client"
+else
+  include_recipe "mysql::server"
+end
 include_recipe "php"
 include_recipe "php::module_mysql"
 include_recipe "apache2::mod_php5"
+include_recipe "firewall"
 
 # Make sure the mysql gem is installed. This looks like it will change with 
 # the release of 0.10.10 and the inclusion of the new chef_gem. 
@@ -103,7 +110,7 @@ execute "create #{node['wordpress']['db']['database']} database" do
     require 'rubygems'
     Gem.clear_paths
     require 'mysql'
-    m = Mysql.new(node['wordpress']['db']['host'], node['wordpress']['db']['admin_user'], node['wordpress']['db']['admin_password'])
+    m = Mysql.new(node['wordpress']['db']['host'], node['wordpress']['db']['user'], node['wordpress']['db']['password'])
     m.list_dbs.include?(node['wordpress']['db']['database'])
   end
   notifies :create, "ruby_block[save node data]", :immediately unless Chef::Config[:solo]
@@ -151,3 +158,14 @@ web_app "wordpress" do
   server_name server_fqdn
   server_aliases node['wordpress']['server_aliases']
 end
+
+firewall_rule "ssh" do
+  port 22
+  action :allow
+end
+
+firewall_rule "http" do
+  port 80
+  action :allow
+end
+
