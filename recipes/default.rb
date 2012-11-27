@@ -19,7 +19,6 @@
 
 ::Chef::Recipe.send(:include, Opscode::OpenSSL::Password)
 
-include_recipe "apache2"
 if node['wordpress']['db']['host'] != "127.0.0.1"
   include_recipe "mysql::client"
 else
@@ -27,8 +26,6 @@ else
 end
 include_recipe "php"
 include_recipe "php::module_mysql"
-include_recipe "apache2::mod_php5"
-include_recipe "firewall"
 
 # Make sure the mysql gem is installed. This looks like it will change with 
 # the release of 0.10.10 and the inclusion of the new chef_gem. 
@@ -147,25 +144,3 @@ template "#{node['wordpress']['dir']}/wp-config.php" do
   )
   notifies :write, "log[Navigate to 'http://#{server_fqdn}/wp-admin/install.php' to complete wordpress installation]"
 end
-
-apache_site "000-default" do
-  enable false
-end
-
-web_app "wordpress" do
-  template "wordpress.conf.erb"
-  docroot "#{node['wordpress']['dir']}"
-  server_name server_fqdn
-  server_aliases node['wordpress']['server_aliases']
-end
-
-firewall_rule "ssh" do
-  port 22
-  action :allow
-end
-
-firewall_rule "http" do
-  port 80
-  action :allow
-end
-

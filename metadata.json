@@ -12,8 +12,6 @@
   "dependencies": {
     "php": ">= 0.0.0",
     "openssl": ">= 0.0.0",
-    "firewall": ">= 0.0.0",
-    "apache2": ">= 0.99.4",
     "mysql": ">= 1.0.5"
   },
   "recommendations": {
@@ -171,6 +169,20 @@
       "display_name": "WordPress Server Aliases",
       "description": "WordPress Server Aliases",
       "default": "FQDN",
+      "choice": [
+
+      ],
+      "calculated": false,
+      "type": "string",
+      "required": "optional",
+      "recipes": [
+
+      ]
+    },
+    "WordPress/domain_name": {
+      "display_name": "WordPress Domain Name",
+      "description": "WordPress Domain Name",
+      "default": "example.com",
       "choice": [
 
       ],

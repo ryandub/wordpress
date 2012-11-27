@@ -8,11 +8,10 @@ version          "1.0.0"
 
 recipe "WordPress", "Installs and configures WordPress LAMP stack on a single system"
 
-%w{ php openssl firewall}.each do |cb|
+%w{ php openssl }.each do |cb|
   depends cb
 end
 
-depends "apache2", ">= 0.99.4"
 depends "mysql", ">= 1.0.5"
 
 %w{ debian ubuntu }.each do |os|
@@ -73,3 +72,8 @@ attribute "WordPress/server_aliases",
   :display_name => "WordPress Server Aliases",
   :description => "WordPress Server Aliases",
   :default => "FQDN"
+
+attribute "WordPress/domain_name",
+  :display_name => "WordPress Domain Name",
+  :description => "WordPress Domain Name",
+  :default => "example.com"
