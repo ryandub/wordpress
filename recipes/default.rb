@@ -41,13 +41,16 @@ else
   server_fqdn = node['fqdn']
 end
 
-node.set_unless['wordpress']['db']['password'] = secure_password
-node.set_unless['wordpress']['keys']['auth'] = secure_password
-node.set_unless['wordpress']['keys']['secure_auth'] = secure_password
-node.set_unless['wordpress']['keys']['logged_in'] = secure_password
-node.set_unless['wordpress']['keys']['nonce'] = secure_password
-node.set_unless['wordpress']['db']['admin_password'] = node['mysql']['server_root_password']
+if node['wordpress']['databag']
+  databag = Chef::EncryptedDataBagItem.load(node['wordpress']['databag'], "wordpress")
+end
 
+node.set_unless['wordpress']['db']['password'] = databag['wordpress']['database']['password'] rescue secure_password
+node.set_unless['wordpress']['keys']['auth'] = databag['wordpress']['wp_auth'] rescue secure_password
+node.set_unless['wordpress']['keys']['secure_auth'] = databag['wordpress']['wp_secure_auth'] rescue secure_password
+node.set_unless['wordpress']['keys']['logged_in'] = databag['wordpress']['logged_in'] rescue secure_password
+node.set_unless['wordpress']['keys']['nonce'] = databag['wordpress']['wp_nonce'] rescue secure_password
+node.set_unless['wordpress']['db']['admin_password'] = databag['mysql']['server_root_password'] rescue node['mysql']['server_root_password']
 
 if node['wordpress']['version'] == 'latest'
   # WordPress.org does not provide a sha256 checksum, so we'll use the sha1 they do provide
