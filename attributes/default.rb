@@ -35,6 +35,7 @@ default['wordpress']['allow_multisite'] = false
 
 default['wordpress']['listen_ports'] = ['80']
 default['wordpress']['server_aliases'] = [node['fqdn']]
+default['wordpress']['server_port'] = '80'
 
 default['wordpress']['install']['user'] = node['apache']['user']
 default['wordpress']['install']['group'] = node['apache']['group']
