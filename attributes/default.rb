@@ -33,6 +33,7 @@ default['wordpress']['db']['host'] = 'localhost'
 
 default['wordpress']['allow_multisite'] = false
 
+default['wordpress']['listen_ports'] = ['80']
 default['wordpress']['server_aliases'] = [node['fqdn']]
 
 default['wordpress']['install']['user'] = node['apache']['user']
